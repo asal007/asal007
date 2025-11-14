@@ -1,0 +1,17 @@
+{
+  "appId": "de.meinimmokauf.app",
+  "appName": "MeinImmoKauf",
+  "appVersion": "1.0.0",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 3000,
+      "launchAutoHide": true,
+      "backgroundColor": "#0f172a",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": true,
+      "androidSpinnerStyle": "large"
+    }
+  }
+}

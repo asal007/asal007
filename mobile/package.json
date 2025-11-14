@@ -1,0 +1,37 @@
+{
+  "name": "meinimmokauf",
+  "version": "1.0.0",
+  "description": "MeinImmoKauf - Dein Ratgeber für Immobilienkauf",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ionic serve",
+    "build": "ionic build",
+    "build:prod": "ionic build --prod",
+    "cap:add:android": "npx cap add android",
+    "cap:add:ios": "npx cap add ios",
+    "cap:open:android": "npx cap open android",
+    "cap:open:ios": "npx cap open ios",
+    "cap:sync": "npx cap sync",
+    "cap:build:android": "npx cap build android",
+    "cap:build:ios": "npx cap build ios"
+  },
+  "dependencies": {
+    "@capacitor/app": "^5.0.0",
+    "@capacitor/core": "^5.0.0",
+    "@capacitor/splash-screen": "^5.0.0",
+    "@capacitor/status-bar": "^5.0.0",
+    "@ionic/angular": "^7.0.0",
+    "angular": "^15.0.0",
+    "rxjs": "^7.0.0",
+    "tslib": "^2.0.0",
+    "zone.js": "^0.12.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^15.0.0",
+    "@angular/cli": "^15.0.0",
+    "@angular/compiler-cli": "^15.0.0",
+    "@capacitor/cli": "^5.0.0",
+    "@ionic/app-scripts": "^3.0.0",
+    "typescript": "^4.9.0"
+  }
+}

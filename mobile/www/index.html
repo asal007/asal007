@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="MeinImmoKauf - Dein Ratgeber für Immobilienkauf" />
+  <meta name="theme-color" content="#00c49a" />
+  <title>MeinImmoKauf</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="assets/icon/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      overflow: hidden;
+    }
+
+    .app-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    .app-header {
+      background: linear-gradient(135deg, #00c49a 0%, #00d4aa 100%);
+      padding: 1rem;
+      color: white;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+    }
+
+    .app-header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .app-content {
+      flex: 1;
+      overflow: auto;
+      width: 100%;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      background: #0f172a;
+    }
+
+    .spinner {
+      border: 4px solid #1f2937;
+      border-top: 4px solid #00c49a;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      margin-top: 1rem;
+      text-align: center;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="app-header">
+      <h1>🏠 MeinImmoKauf</h1>
+    </div>
+    <div class="app-content">
+      <div class="loading">
+        <div>
+          <div class="spinner"></div>
+          <div class="loading-text">App wird geladen...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="cordova.js"></script>
+  <script type="module" src="capacitor-entrypoint.js"></script>
+  <script>
+    // Laden der Streamlit-App über Capacitor
+    document.addEventListener('DOMContentLoaded', function() {
+      const webView = document.querySelector('.app-content');
+      
+      // Entferne Loading-Screen
+      const loading = webView.querySelector('.loading');
+      if (loading) loading.remove();
+
+      // Erstelle iframe für Streamlit-App
+      const iframe = document.createElement('iframe');
+      iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock');
+      webView.appendChild(iframe);
+
+      // Lade Streamlit-App aus config
+      const config = window.capacitorConfig || { url: 'https://meinimmokauf.de' };
+      iframe.src = config.url;
+    });
+  </script>
+</body>
+</html>
