@@ -1,9 +1,21 @@
 import streamlit as st
 from utils import inject_top_nav, hide_sidebar_completely, hide_header_actions_for_non_admin
 from i18n import t, language_selector, apply_rtl_if_needed
-from auth import login_gate
+from auth import login_gate, hash_password
+from db import init_db, list_all_users, add_user, set_admin
 
 st.set_page_config(page_title="MeinImmoKauf", page_icon="icon.png", layout="wide")
+
+# Initialize database and create default admin user if needed
+init_db()
+users = list_all_users()
+if not users:
+    # Create default admin user
+    default_username = "admin"
+    default_password = "admin1234"
+    hashed = hash_password(default_password)
+    add_user(default_username, hashed, is_admin=True)
+    set_admin(default_username, True)
 
 # Auth-Gate: Wenn nicht angemeldet, stoppe hier
 login_gate()
