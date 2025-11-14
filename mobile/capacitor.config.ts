@@ -7,7 +7,7 @@ const config: CapacitorConfig = {
   bundledWebRuntime: false,
   server: {
     androidScheme: 'https',
-    url: 'https://meinimmokauf.onrender.com', // Produktions-URL (Render)
+    url: 'https://asal007.onrender.com', // Produktions-URL (Render)
     cleartext: false,
   },
   ios: {
