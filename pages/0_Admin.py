@@ -12,7 +12,15 @@ login_gate()
 # Prüfe Admin-Zugriff
 username = st.session_state.get("auth_user")
 user = get_user(username)
-is_admin = bool(user and int(user.get("is_admin", 0)) == 1)
+
+# Stelle sicher, dass is_admin ein Boolean ist
+is_admin = False
+if user:
+    admin_value = user.get("is_admin", 0)
+    if isinstance(admin_value, bool):
+        is_admin = admin_value
+    else:
+        is_admin = bool(int(admin_value) == 1)
 
 if not is_admin:
     st.error("Zugriff verweigert. Sie müssen ein Administrator sein.")
