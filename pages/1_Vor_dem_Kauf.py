@@ -35,26 +35,7 @@ with st.container():
         nk_prozent = st.slider(t("closing_costs_pct"), min_value=5, max_value=15, value=10)
     submitted = st.button(t("calc_max_price"))
 
-    # Debug: Zeige gespeicherte Session-Keys für die numerischen Eingaben
-    if st.checkbox("Debug: Zahlenfelder anzeigen", key="debug_numbers"):
-        lang = st.session_state.get("lang", "de")
-        keys = [
-            ("inp_income", "Einkommen"),
-            ("inp_expenses", "Ausgaben"),
-            ("inp_reserve", "Reserve"),
-            ("inp_equity", "Eigenkapital"),
-        ]
-        debug = {}
-        for k, label in keys:
-            state_key = f"{k}_val"
-            ui_key = f"{k}_{lang}"
-            debug[label] = {
-                "ui_key": ui_key,
-                "ui_value": st.session_state.get(ui_key),
-                "state_key": state_key,
-                "parsed_value": st.session_state.get(state_key),
-            }
-        st.json(debug)
+    # (Debug output removed)
 
 if submitted:
     verfuegbare_rate = max(0.0, einkommen - ausgaben - reserve)
