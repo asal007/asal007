@@ -22,7 +22,7 @@ st.caption(t("phase1_caption"))
 st.header(t("financial_prep"))
 st.subheader(t("budget_calc"))
 
-with st.form("budget_form"):
+with st.container():
     col_a, col_b = st.columns(2)
     with col_a:
         einkommen = number_input_localized(t("income_monthly"), value=4000.0, min_value=0.0, decimals=2, key="inp_income")
@@ -33,7 +33,28 @@ with st.form("budget_form"):
         zins = number_input_localized(t("interest_pa"), value=3.5, min_value=0.0, decimals=2, key="inp_interest")
         laufzeit_j = int(number_input_localized(t("term_years"), value=30, min_value=1, decimals=0, key="inp_term"))
         nk_prozent = st.slider(t("closing_costs_pct"), min_value=5, max_value=15, value=10)
-    submitted = st.form_submit_button(t("calc_max_price"))
+    submitted = st.button(t("calc_max_price"))
+
+    # Debug: Zeige gespeicherte Session-Keys für die numerischen Eingaben
+    if st.checkbox("Debug: Zahlenfelder anzeigen", key="debug_numbers"):
+        lang = st.session_state.get("lang", "de")
+        keys = [
+            ("inp_income", "Einkommen"),
+            ("inp_expenses", "Ausgaben"),
+            ("inp_reserve", "Reserve"),
+            ("inp_equity", "Eigenkapital"),
+        ]
+        debug = {}
+        for k, label in keys:
+            state_key = f"{k}_val"
+            ui_key = f"{k}_{lang}"
+            debug[label] = {
+                "ui_key": ui_key,
+                "ui_value": st.session_state.get(ui_key),
+                "state_key": state_key,
+                "parsed_value": st.session_state.get(state_key),
+            }
+        st.json(debug)
 
 if submitted:
     verfuegbare_rate = max(0.0, einkommen - ausgaben - reserve)

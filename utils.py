@@ -414,6 +414,27 @@ def parse_localized_number(text: str, default: float = 0.0) -> float:
     except Exception:
         return default
 
+
+def number_input_localized_on_change(ui_key: str, state_key: str | None, decimals: int = 2):
+    """
+    Callback for Streamlit `on_change` to parse the raw text, update the
+    persisted numeric state and replace the visible text with a localized
+    formatted representation.
+    """
+    import streamlit as st
+    try:
+        raw = st.session_state.get(ui_key, "")
+        current_val = st.session_state.get(state_key, 0.0) if state_key else 0.0
+        parsed = parse_localized_number(raw, default=current_val)
+        if state_key:
+            st.session_state[state_key] = parsed
+        display_after = fmt_number(parsed, decimals)
+        # Update the visible text input to the localized formatted value
+        st.session_state[ui_key] = display_after
+    except Exception:
+        # Silently ignore formatting errors to avoid breaking the UI
+        return
+
 def number_input_localized(label: str, value: float, min_value: float = 0.0, decimals: int = 2, key: str | None = None):
     """
     Wrapper um eine lokalisierte Zahleneingabe via Textfeld.
@@ -428,10 +449,47 @@ def number_input_localized(label: str, value: float, min_value: float = 0.0, dec
     current_val = st.session_state.get(state_key, value) if state_key else value
     display = fmt_number(current_val, decimals)
     ui_key = f"{key}_{lang}" if key else None
-    text = st.text_input(label, display, key=ui_key)
+    # Note: Streamlit does not allow widget callbacks inside `st.form` except
+    # on the form submit button. To support forms and regular pages we avoid
+    # using `on_change` here. Instead we parse the input and update the
+    # visible text with a localized formatted value immediately after parsing.
+    if ui_key:
+        # Initialize session state with the formatted display value if not already set
+        if ui_key not in st.session_state:
+            st.session_state[ui_key] = display
+        # Try to attach an on_change callback to format immediately when the
+        # user finishes editing. If this widget happens to be inside a form,
+        # Streamlit will raise an exception for callbacks on widgets inside
+        # forms (only form_submit_button supports callbacks). We catch that
+        # and fall back to a plain text_input to avoid crashing the app.
+        try:
+            text = st.text_input(label, key=ui_key, on_change=number_input_localized_on_change, args=(ui_key, state_key, decimals))
+        except Exception:
+            text = st.text_input(label, key=ui_key)
+    else:
+        text = st.text_input(label, value=display)
     parsed = parse_localized_number(text, default=current_val)
     if state_key:
         st.session_state[state_key] = parsed
     if parsed < min_value:
         parsed = min_value
+    # Aktualisiere das sichtbare Textfeld mit der lokalisierten Darstellung
+    # (z. B. 3000 -> 3.000,00 für DE oder 3,000.00 für EN/AR). Diese direkte
+    # Aktualisierung funktioniert auch innerhalb von `st.form` (ohne Callbacks).
+    try:
+        display_after = fmt_number(parsed, decimals)
+        # Setze nur, wenn sich der Text unterscheidet (vermeidet unnötige Reruns)
+        if ui_key and st.session_state.get(ui_key, None) != display_after:
+            st.session_state[ui_key] = display_after
+            # Force a rerun so the updated formatted value is shown immediately.
+            # This is safe because on the next run the value equals display_after
+            # and we won't trigger another rerun.
+            try:
+                st.experimental_rerun()
+            except Exception:
+                # If rerun fails for any reason, ignore and continue.
+                pass
+    except Exception:
+        pass
+
     return parsed
